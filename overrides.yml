@@ -1,0 +1,6 @@
+---
+# Override default vars here
+
+install_packages: no
+
+base_path: "~/tmp/df-lnp2"

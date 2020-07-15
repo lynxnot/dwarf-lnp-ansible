@@ -1,0 +1,10 @@
+{
+    "title": "Obsidian 16x",
+    "content_version": "2020-02-03",
+    "author": "Obsidian Soul",
+    "url": "https://github.com/DFgraphics/Obsidian",
+    "df_min_version": "0.47.01",
+    "df_max_version": "0.48.00",
+    "folder_prefix": "Obsidian",
+    "tooltip": "Medieval theme with a focus on consistency."
+}

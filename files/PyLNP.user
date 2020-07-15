@@ -1,0 +1,6 @@
+{
+  "terminal_type": "Custom Command",
+  "terminal": "byobu-tmux new-window -t dwarfy:1 -n 'DFHack'",
+  "tkgui_width": 1280,
+  "tkgui_height": 1036
+}
