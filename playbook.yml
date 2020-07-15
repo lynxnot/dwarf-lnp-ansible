@@ -1,6 +1,6 @@
 ---
 
-- name: Install Dwarf-Fortress LNP locally
+- name: Install Dwarf-Fortress LazyNewbiePack the lazy way
   hosts: localhost
   connection: local
   become: no
@@ -10,7 +10,7 @@
 
   vars:
     install_packages: yes
-    base_path: "~/tmp/df-lnp"
+    base_path: ~/.local/share/dwarf-fortress-lnp
     paths:
       bins: "{{ base_path }}/bin"
       distrib: "{{ base_path }}/distrib"
@@ -90,7 +90,7 @@
         - {url: "{{ ss_download_url }}", dest: "{{ ss_distrib_path }}"}
         
 
-    - name: "Unarchive the archives by not using unarchive"
+    - name: decompress me tarballz
       command:
         cmd: "tar xvjf {{ item.src }} -C {{ item.dest }}"
         creates: "{{ item.creates }}"
@@ -119,7 +119,9 @@
         version: "{{ item.version }}"
         update: no
       loop:
-        - {repo: "{{ lnp_repo }}", dest: "{{ lnp_path }}", version: "{{ lnp_version }}"}
+        - repo: "{{ lnp_repo }}"
+          dest: "{{ lnp_path }}"
+          version: "{{ lnp_version }}"
 
 
     - name: rsync LNP, too many files for copy
