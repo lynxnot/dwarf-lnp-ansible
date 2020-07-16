@@ -10,7 +10,7 @@
 
   vars:
     install_packages: yes
-    base_path: ~/.local/share/dwarf-fortress-lnp
+    base_path: ~d/.local/share/dwarf-fortress-lnp
     paths:
       bins: "{{ base_path }}/bin"
       distrib: "{{ base_path }}/distrib"
@@ -36,7 +36,18 @@
     lnp_version: 0.14a
     lnp_repo: "https://github.com/Pidgeot/python-lnp.git"
     lnp_path: "{{ paths.install }}/python-lnp"
+
+    therapist_version: v41.1.7
+    therapist_appimage: "DwarfTherapist-{{ therapist_version }}-linux-x86_64.AppImage"
+    therapist_url: "https://github.com/Dwarf-Therapist/Dwarf-Therapist/releases/download/{{ therapist_version }}/{{ therapist_appimage }}"
+    therapist_distrib_path: "{{ paths.distrib }}/{{ therapist_appimage }}"
     
+    legendsbr_version: 1.19.0
+    legendsbr_jar: "legendsbrowser-{{ legendsbr_version }}.jar"
+    legendsbr_url: "https://github.com/robertjanetzko/LegendsBrowser/releases/download/1.19/{{ legendsbr_jar }}"
+    legendsbr_distrib_path: "{{ paths.distrib }}/{{ legendsbr_jar }}"
+    legendsbr_path: "{{ paths.install }}/legendsbrowser"
+
     packages:
       - libglu1-mesa
       - libgtk2.0-0
@@ -77,10 +88,11 @@
         - "{{ paths.bins }}"
         - "{{ paths.distrib }}"
         - "{{ paths.install }}"
+        - "{{ legendsbr_path }}"
 
 
     # Unarchive is weird with .tar.bz2 so let's doit manually
-    - name: Download distrib archives
+    - name: Download distrib archives and AppImages too
       get_url:
         url: "{{ item.url }}"
         dest: "{{ item.dest }}"
@@ -88,6 +100,8 @@
         - {url: "{{ df_download_url }}", dest: "{{ df_distrib_path }}"}
         - {url: "{{ dfhack_download_url }}", dest: "{{ dfhack_distrib_path }}"}
         - {url: "{{ ss_download_url }}", dest: "{{ ss_distrib_path }}"}
+        - {url: "{{ therapist_url }}", dest: "{{ therapist_distrib_path }}"}
+        - {url: "{{ legendsbr_url }}", dest: "{{ legendsbr_distrib_path }}"}
         
 
     - name: decompress me tarballz
@@ -112,7 +126,44 @@
         remote_src: yes
 
 
-    - name: Clone repos 
+    - name: chmod +x on DwarfTherapist appimage
+      file:
+        path: "{{ therapist_distrib_path }}"
+        mode: "0755"
+
+
+    - name: Extract DwarfTherapist appimage to deal with syscap
+      command:
+        cmd: "{{ therapist_distrib_path }} --appimage-extract"
+        chdir: "{{ paths.install }}"
+        creates: "{{ paths.install }}/squashfs-root"
+
+
+    - name: Move DwarfTherapist to share dir
+      command:
+        cmd: "mv {{ paths.install }}/squashfs-root {{ paths.install }}/dwarftherapist"
+        creates: "{{ paths.install }}/dwarftherapist"
+
+
+    - name: Set capabilities on executable
+      become: yes
+      # this does not work with '~/' in the base path the first time
+      # but it works when caps have been already set once
+      #become_flags: "-E -S -n"
+      capabilities:
+        path: "{{ paths.install }}/dwarftherapist/AppRun"
+        capability: cap_sys_ptrace+eip
+        state: present
+
+
+    - name: Copy LegendsBrowser jar
+      copy:
+        src: "{{ legendsbr_distrib_path }}"
+        dest: "{{ legendsbr_path }}/legendsbrowser.jar"
+        remote_src: yes
+
+
+    - name: Clone repos
       git:
         repo: "{{ item.repo }}"
         dest: "{{ item.dest }}"

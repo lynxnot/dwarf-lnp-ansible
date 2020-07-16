@@ -1,0 +1,3 @@
+[dwarf-therapist.sh:Dwarf Therapist:A dwarf management tool for DF]
+[soundsense.sh:SoundSense:A sound/music engine for DF]
+[legends-browser.sh:Legends Browser:Web-based legends viewer]
