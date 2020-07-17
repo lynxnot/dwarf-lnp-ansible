@@ -151,7 +151,7 @@
       # but it works when caps have been already set once
       #become_flags: "-E -S -n"
       capabilities:
-        path: "{{ paths.install }}/dwarftherapist/AppRun"
+        path: "{{ paths.install }}/dwarftherapist/usr/bin/dwarftherapist"
         capability: cap_sys_ptrace+eip
         state: present
 
