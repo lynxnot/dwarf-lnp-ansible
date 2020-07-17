@@ -59,7 +59,7 @@
       - libsndfile1
       - libncursesw5
       - libcanberra-gtk-dev
-      - qt5base-dev
+      - qtbase5-dev
       - qtdeclarative5-dev
       - python3-tk
       - python3-pil.imagetk
